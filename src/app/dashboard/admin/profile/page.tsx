@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Sidebar from '../../../../components/Sidebar';
 import Navbar from '../../../../components/Navbar';
 
@@ -14,12 +15,12 @@ export default function ProfilePage() {
           <div className="w-full max-w-4xl space-y-8">
             {/* School Logo and Cover */}
             <div className="flex flex-col items-center gap-4">
-              <div className="w-full h-40 bg-gray-200 rounded-xl flex items-center justify-center mb-2">
-                <span className="text-gray-400">  <img src="/assets/cover.jpeg" alt="School Logo" className="object-contain rounded-xl" /></span>
+              <div className="w-full h-40 bg-gray-200 rounded-xl flex items-center justify-center mb-2 overflow-hidden">
+                <Image src="/assets/cover.jpeg" alt="School Cover" width={1200} height={320} className="object-contain rounded-xl" />
               </div>
               <div className="-mt-16 mb-2">
                 <div className="w-32 h-32 rounded-full bg-white shadow flex items-center justify-center overflow-hidden border-0 border-background">
-                  <img src="/assets/kalutara vidyalaya.png" alt="School Logo" className="object-contain w-25 h-25 p-1" />
+                  <Image src="/assets/kalutara vidyalaya.png" alt="School Logo" width={120} height={120} className="object-contain p-1" />
                 </div>
               </div>
               <h1 className="text-3xl font-bold text-primary">Kalutara Vidyalaya National School</h1>
