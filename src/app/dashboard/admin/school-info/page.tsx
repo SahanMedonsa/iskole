@@ -19,7 +19,7 @@ export default function SchoolInfoPage() {
             </Link>
           </div>
           <h1 className="text-2xl font-bold mb-4 text-primary">School Info Management</h1>
-          <p className="mb-6 text-gray-600">Edit your school&apos;s profile and contact details.</p>
+          <p className="mb-6 text-gray-600">Edit your school profile and contact details.</p>
           <Card className="mb-8">
             <h2 className="text-lg font-semibold mb-4">School Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
