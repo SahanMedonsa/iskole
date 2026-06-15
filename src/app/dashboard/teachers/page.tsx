@@ -214,7 +214,7 @@ export default function TeachersPage() {
               <div className="flex-1"></div>
               <div className="flex flex-col items-center justify-end">
                 <span className="text-2xl font-bold text-primary">{formattedDate}</span>
-                <span className="text-gray-600">Today&apos;s Date</span>
+                <span className="text-gray-600">Todays Date</span>
               </div>
             </div>
           </div>
