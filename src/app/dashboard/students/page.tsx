@@ -210,7 +210,7 @@ export default function StudentsPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
-                  <div className="text-sm text-green-600 font-medium">Today's Attendance</div>
+                  <div className="text-sm text-green-600 font-medium">Today&apos;s Attendance</div>
                   <div className="text-2xl font-bold text-green-800">94.5%</div>
                   <div className="text-xs text-green-600 mt-1">1,370 present / 80 absent</div>
                 </div>

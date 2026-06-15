@@ -258,8 +258,8 @@ export default function TeacherRegistrationForm({ onClose }: { onClose: () => vo
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select Qualification</option>
-                    <option value="Bachelor's Degree">Bachelor's Degree</option>
-                    <option value="Master's Degree">Master's Degree</option>
+                    <option value="Bachelor&apos;s Degree">Bachelor&apos;s Degree</option>
+                    <option value="Master&apos;s Degree">Master&apos;s Degree</option>
                     <option value="PhD">PhD</option>
                     <option value="Diploma">Diploma</option>
                     <option value="Certificate">Certificate</option>
