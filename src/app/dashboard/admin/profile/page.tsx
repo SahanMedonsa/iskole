@@ -15,12 +15,12 @@ export default function ProfilePage() {
           <div className="w-full max-w-4xl space-y-8">
             {/* School Logo and Cover */}
             <div className="flex flex-col items-center gap-4">
-              <div className="w-full h-40 bg-gray-200 rounded-xl flex items-center justify-center mb-2 overflow-hidden">
-                <Image src="/assets/cover.jpeg" alt="School Cover" width={1200} height={320} className="object-contain rounded-xl" />
+              <div className="w-full h-60 bg-gray-200 rounded-xl flex items-center justify-center mb-2 overflow-hidden">
+                <Image src="/assets/cover.jpeg" alt="School Cover" width={1200} height={920} className="object-contain rounded-xl" />
               </div>
               <div className="-mt-16 mb-2">
-                <div className="w-32 h-32 rounded-full bg-white shadow flex items-center justify-center overflow-hidden border-0 border-background">
-                  <Image src="/assets/kalutara vidyalaya.png" alt="School Logo" width={120} height={120} className="object-contain p-1" />
+                <div className="w-40 h-40 rounded-full bg-white shadow flex items-center justify-center overflow-hidden border-0 border-background">
+                  <Image src="/assets/kalutara vidyalaya.png" alt="School Logo" width={100} height={100} className="object-contain p-1" />
                 </div>
               </div>
               <h1 className="text-3xl font-bold text-primary">Kalutara Vidyalaya National School</h1>
