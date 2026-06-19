@@ -5,28 +5,30 @@ import ClientClassDetailPage from './ClientClassDetailPage';
 import { categoryCards, classDetailsMap, type ClassCategorySlug } from '../../data';
 
 type PageParams = {
-  params: {
+  params: Promise<{
     category: ClassCategorySlug;
     classSlug: string;
-  };
+  }>;
 };
 
-export default function ClassDetailPage({ params }: PageParams) {
-  if (params.category === 'secondary') {
+export default async function ClassDetailPage({ params }: PageParams) {
+  const { category, classSlug } = await params;
+
+  if (category === 'secondary') {
     return (
       <div className="bg-background min-h-screen flex flex-col">
         <Navbar />
         <div className="flex flex-1">
           <Sidebar />
           <main className="flex-1 p-8">
-            <ClientGradeHubPage gradeSlug={params.classSlug} />
+            <ClientGradeHubPage gradeSlug={classSlug} />
           </main>
         </div>
       </div>
     );
   }
 
-  const classDetails = classDetailsMap[params.category]?.[params.classSlug];
+  const classDetails = classDetailsMap[category]?.[classSlug];
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -35,8 +37,8 @@ export default function ClassDetailPage({ params }: PageParams) {
         <Sidebar />
         <main className="flex-1 p-8">
           <ClientClassDetailPage
-            category={params.category}
-            classSlug={params.classSlug}
+            category={category}
+            classSlug={classSlug}
             classDetails={classDetails}
           />
         </main>

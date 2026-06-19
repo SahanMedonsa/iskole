@@ -4,15 +4,16 @@ import ClientSectionDetailPage from './ClientSectionDetailPage';
 import { secondarySectionDetailsMap } from '../../../data';
 
 type PageParams = {
-  params: {
+  params: Promise<{
     category: string;
     classSlug: string;
     sectionSlug: string;
-  };
+  }>;
 };
 
-export default function SectionDetailPage({ params }: PageParams) {
-  const sectionDetails = secondarySectionDetailsMap[`${params.classSlug}/${params.sectionSlug}`];
+export default async function SectionDetailPage({ params }: PageParams) {
+  const { classSlug, sectionSlug } = await params;
+  const sectionDetails = secondarySectionDetailsMap[`${classSlug}/${sectionSlug}`];
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
@@ -20,7 +21,7 @@ export default function SectionDetailPage({ params }: PageParams) {
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 p-8">
-          <ClientSectionDetailPage sectionDetails={sectionDetails} gradeSlug={params.classSlug} />
+          <ClientSectionDetailPage sectionDetails={sectionDetails} gradeSlug={classSlug} />
         </main>
       </div>
     </div>

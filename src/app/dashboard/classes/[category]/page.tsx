@@ -5,13 +5,15 @@ import ClientSecondaryCategoryPage from './ClientSecondaryCategoryPage';
 import { categoryCards, type ClassCategorySlug } from '../data';
 
 type PageParams = {
-  params: {
+  params: Promise<{
     category: ClassCategorySlug;
-  };
+  }>;
 };
 
-export default function ClassCategoryPage({ params }: PageParams) {
-  if (params.category === 'secondary') {
+export default async function ClassCategoryPage({ params }: PageParams) {
+  const { category } = await params;
+
+  if (category === 'secondary') {
     return (
       <div className="bg-background min-h-screen flex flex-col">
         <Navbar />
@@ -31,7 +33,7 @@ export default function ClassCategoryPage({ params }: PageParams) {
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 p-8">
-          <ClientClassCategoryPage category={params.category} />
+          <ClientClassCategoryPage category={category} />
         </main>
       </div>
     </div>
