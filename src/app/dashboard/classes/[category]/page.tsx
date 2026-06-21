@@ -13,14 +13,14 @@ type PageParams = {
 export default async function ClassCategoryPage({ params }: PageParams) {
   const { category } = await params;
 
-  if (category === 'secondary') {
+  if (category === 'secondary' || category === 'primary') {
     return (
       <div className="bg-background min-h-screen flex flex-col">
         <Navbar />
         <div className="flex flex-1">
           <Sidebar />
           <main className="flex-1 p-8">
-            <ClientSecondaryCategoryPage />
+            <ClientSecondaryCategoryPage category={category} />
           </main>
         </div>
       </div>

@@ -512,8 +512,8 @@ export const secondarySectionDetailsMap: Record<string, SectionDetails> = Object
           label: `${hub.gradeLabel} ${sectionLabel}`,
           gradeLabel: hub.gradeLabel,
           classTeacher: hub.sections[0].classTeacher,
-        classTeacherId: 'TCH-0085',
-        classTeacherPhoto: '/assets/profile.jpg',
+          classTeacherId: 'TCH-0085',
+          classTeacherPhoto: '/assets/profile.jpg',
           monitor: hub.monitor,
           viceMonitor: `${hub.gradeLabel} Vice Monitor`,
           totalStudents: section.studentCount,
@@ -531,3 +531,85 @@ export const secondarySectionDetailsMap: Record<string, SectionDetails> = Object
     })
   )
 ) as Record<string, SectionDetails>;
+
+// ─── Primary Grade Hubs ────────────────────────────────────────────────────
+
+const primaryGradeMeta = [
+  { gradeSlug: 'grade-1', gradeLabel: 'Grade 1', monitor: 'Sithum Perera', classTeacher: 'Ms. Nadeesha Silva', subjects: ['Sinhala', 'Mathematics', 'English'], accent: 'from-sky-500 to-blue-500' },
+  { gradeSlug: 'grade-2', gradeLabel: 'Grade 2', monitor: 'Chamara Fernando', classTeacher: 'Mr. Ruwan Perera', subjects: ['Sinhala', 'Mathematics', 'English'], accent: 'from-blue-500 to-indigo-500' },
+  { gradeSlug: 'grade-3', gradeLabel: 'Grade 3', monitor: 'Dilini Jayawardana', classTeacher: 'Ms. Ishara Fernando', subjects: ['Sinhala', 'Mathematics', 'English'], accent: 'from-indigo-500 to-violet-500' },
+  { gradeSlug: 'grade-4', gradeLabel: 'Grade 4', monitor: 'Kasun Abewickrama', classTeacher: 'Mr. Kasun Jayasuriya', subjects: ['Sinhala', 'Mathematics', 'English'], accent: 'from-violet-500 to-purple-500' },
+  { gradeSlug: 'grade-5', gradeLabel: 'Grade 5', monitor: 'Nethmi Gunawardana', classTeacher: 'Ms. Dilani Senanayake', subjects: ['Sinhala', 'Mathematics', 'English'], accent: 'from-purple-500 to-fuchsia-500' },
+];
+
+export const primaryGradeHubs: GradeHub[] = primaryGradeMeta.map((meta) => ({
+  gradeSlug: meta.gradeSlug,
+  gradeLabel: meta.gradeLabel,
+  monitor: meta.monitor,
+  teachers: meta.subjects.map((subject, index) => ({
+    subject,
+    teacher: ['Ms. Nadeesha Silva', 'Mr. Ruwan Perera', 'Ms. Ishara Fernando'][index % 3],
+  })),
+  timetable: [
+    { period: '1', time: '07:30 - 08:10', subject: meta.subjects[0], teacher: 'Ms. Nadeesha Silva' },
+    { period: '2', time: '08:10 - 08:50', subject: meta.subjects[1], teacher: 'Mr. Ruwan Perera' },
+    { period: '3', time: '08:50 - 09:30', subject: meta.subjects[2], teacher: 'Ms. Ishara Fernando' },
+    { period: '4', time: '09:45 - 10:25', subject: meta.subjects[0], teacher: 'Ms. Nadeesha Silva' },
+    { period: '5', time: '10:25 - 11:05', subject: meta.subjects[1], teacher: 'Mr. Ruwan Perera' },
+  ],
+  subjects: meta.subjects,
+  sections: ['A', 'B', 'C'].map((section, index) => ({
+    slug: `${meta.gradeSlug.replace('grade-', '')}${section.toLowerCase()}`,
+    label: `${meta.gradeLabel.replace('Grade ', '')}${section}`,
+    classTeacher: meta.classTeacher,
+    studentCount: 34 + index * 2,
+    activeStudents: 32 + index * 2,
+    absentStudents: 2,
+  })),
+  accent: meta.accent,
+}));
+
+export const primarySectionDetailsMap: Record<string, SectionDetails> = Object.fromEntries(
+  primaryGradeHubs.flatMap((hub) =>
+    hub.sections.map((section) => {
+      const sectionLabel = section.label;
+      const subjects = hub.subjects;
+      const classKey = `${hub.gradeSlug}/${section.slug}`;
+
+      return [
+        classKey,
+        {
+          gradeSlug: hub.gradeSlug,
+          sectionSlug: section.slug,
+          label: `${hub.gradeLabel} ${sectionLabel}`,
+          gradeLabel: hub.gradeLabel,
+          classTeacher: section.classTeacher,
+          classTeacherId: 'TCH-0085',
+          classTeacherPhoto: '/assets/profile.jpg',
+          monitor: hub.monitor,
+          viceMonitor: `${hub.gradeLabel} Vice Monitor`,
+          totalStudents: section.studentCount,
+          activeStudents: section.activeStudents,
+          absentStudents: section.absentStudents,
+          weeklyTimetable: buildWeeklyTimetable(subjects),
+          teachers: hub.teachers,
+          subjects,
+          homeworkByDate: buildHomeworkByDate(hub.gradeLabel, sectionLabel, subjects),
+          marks: buildSectionMarks(subjects, sectionLabel.charCodeAt(1)),
+          students: buildSectionStudents(hub.gradeLabel, sectionLabel),
+          attendanceRecords: buildAttendanceRecords(sectionLabel),
+        },
+      ];
+    })
+  )
+) as Record<string, SectionDetails>;
+
+export const gradeHubsByCategory: Partial<Record<ClassCategorySlug, GradeHub[]>> = {
+  primary: primaryGradeHubs,
+  secondary: secondaryGradeHubs,
+};
+
+export const sectionDetailsByCategory: Partial<Record<ClassCategorySlug, Record<string, SectionDetails>>> = {
+  primary: primarySectionDetailsMap,
+  secondary: secondarySectionDetailsMap,
+};
