@@ -3,449 +3,289 @@ import React, { useState } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import Navbar from '../../../components/Navbar';
 import Link from 'next/link';
-
-const stats = [
-  { label: 'Total Registered Students', value: 1450 },
-  { label: 'Total Active Students', value: 1400 },
-  { label: 'New Registrations (This Month)', value: 25 },
-  { label: 'Present Today', value: 1370 },
-  { label: 'Absent Today', value: 80 },
-  { label: 'Male', value: 750 },
-  { label: 'Female', value: 700 },
-];
+import {
+  Users, UserCheck, UserX, UserPlus, TrendingUp,
+  BookOpen, Award, AlertCircle, Download, Printer,
+  ArrowUpRight,
+} from 'lucide-react';
 
 const gradeData = [
-  { grade: 1, total: 120, present: 110, absent: 10, new: 3, male: 65, female: 55 },
-  { grade: 2, total: 115, present: 112, absent: 3, new: 1, male: 60, female: 55 },
-  { grade: 3, total: 130, present: 125, absent: 5, new: 2, male: 70, female: 60 },
-  { grade: 4, total: 110, present: 108, absent: 2, new: 1, male: 58, female: 52 },
-  { grade: 5, total: 125, present: 120, absent: 5, new: 2, male: 65, female: 60 },
-  { grade: 6, total: 115, present: 110, absent: 5, new: 1, male: 60, female: 55 },
-  { grade: 7, total: 120, present: 115, absent: 5, new: 2, male: 62, female: 58 },
-  { grade: 8, total: 110, present: 108, absent: 2, new: 1, male: 57, female: 53 },
-  { grade: 9, total: 120, present: 117, absent: 3, new: 2, male: 63, female: 57 },
-  { grade: 10, total: 120, present: 115, absent: 5, new: 2, male: 60, female: 60 },
-  { grade: 11, total: 110, present: 108, absent: 2, new: 1, male: 55, female: 55 },
-  { grade: 12, total: 115, present: 110, absent: 5, new: 1, male: 58, female: 57 },
-  { grade: 13, total: 100, present: 97, absent: 3, new: 2, male: 52, female: 48 },
+  { grade: 1,  total: 120, present: 110, absent: 10, male: 65,  female: 55  },
+  { grade: 2,  total: 115, present: 112, absent: 3,  male: 60,  female: 55  },
+  { grade: 3,  total: 130, present: 125, absent: 5,  male: 70,  female: 60  },
+  { grade: 4,  total: 110, present: 108, absent: 2,  male: 58,  female: 52  },
+  { grade: 5,  total: 125, present: 120, absent: 5,  male: 65,  female: 60  },
+  { grade: 6,  total: 115, present: 110, absent: 5,  male: 60,  female: 55  },
+  { grade: 7,  total: 120, present: 115, absent: 5,  male: 62,  female: 58  },
+  { grade: 8,  total: 110, present: 108, absent: 2,  male: 57,  female: 53  },
+  { grade: 9,  total: 120, present: 117, absent: 3,  male: 63,  female: 57  },
+  { grade: 10, total: 120, present: 115, absent: 5,  male: 60,  female: 60  },
+  { grade: 11, total: 110, present: 108, absent: 2,  male: 55,  female: 55  },
+  { grade: 12, total: 115, present: 110, absent: 5,  male: 58,  female: 57  },
+  { grade: 13, total: 100, present: 97,  absent: 3,  male: 52,  female: 48  },
 ];
 
-const genderPie = [
-  { label: 'Male', value: 750, color: 'fill-blue-500' },
-  { label: 'Female', value: 700, color: 'fill-pink-400' },
+const totalStudents  = gradeData.reduce((a, g) => a + g.total, 0);
+const totalPresent   = gradeData.reduce((a, g) => a + g.present, 0);
+const totalAbsent    = gradeData.reduce((a, g) => a + g.absent, 0);
+const totalMale      = gradeData.reduce((a, g) => a + g.male, 0);
+const totalFemale    = gradeData.reduce((a, g) => a + g.female, 0);
+const attendanceRate = ((totalPresent / totalStudents) * 100).toFixed(1);
+
+const statCards = [
+  { label: 'Total Students',  value: totalStudents.toLocaleString(), sub: `${totalMale}M  ${totalFemale}F`, icon: Users,      color: 'text-blue-600',   bg: 'bg-blue-50'   },
+  { label: 'Present Today',   value: totalPresent.toLocaleString(),  sub: `${attendanceRate}% attendance`,  icon: UserCheck,  color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { label: 'Absent Today',    value: totalAbsent.toLocaleString(),   sub: 'across all grades',              icon: UserX,      color: 'text-red-500',    bg: 'bg-red-50'    },
+  { label: 'New This Month',  value: '25',                           sub: 'new admissions',                 icon: UserPlus,   color: 'text-violet-600', bg: 'bg-violet-50' },
+  { label: 'Top Performers',  value: '156',                          sub: 'GPA above 3.8',                  icon: Award,      color: 'text-amber-600',  bg: 'bg-amber-50'  },
+  { label: 'At Risk',         value: '23',                           sub: 'GPA below 2.0',                  icon: AlertCircle,color: 'text-orange-600', bg: 'bg-orange-50' },
+];
+
+const quickActions = [
+  { label: 'View All Students', href: '/dashboard/students/details', icon: Users,    primary: true  },
+  { label: 'Register Student',  href: '#',                           icon: UserPlus, primary: false },
+  { label: 'Export List',       href: '#',                           icon: Download, primary: false },
+  { label: 'Print ID Cards',    href: '#',                           icon: Printer,  primary: false },
 ];
 
 export default function StudentsPage() {
-  const [search, setSearch] = useState('');
   const [gradeFilter, setGradeFilter] = useState('');
-  const [genderFilter, setGenderFilter] = useState('');
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric'
-  });
 
-  // Filtered data for table
-  const filteredGrades = gradeData.filter(row =>
-    (!gradeFilter || row.grade.toString() === gradeFilter) &&
-    (!genderFilter || genderFilter === 'Male' ? row.male > 0 : row.female > 0)
-  );
+  const filteredGrades = gradeFilter
+    ? gradeData.filter(g => g.grade.toString() === gradeFilter)
+    : gradeData;
+
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+  });
 
   return (
     <div className="bg-background min-h-screen flex flex-col">
       <Navbar />
       <div className="flex flex-1">
-        <div className="rounded-l-2xl overflow-hidden">
-          <Sidebar />
-        </div>
-        <main className="flex-1 flex flex-col p-8 overflow-y-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-primary">Students Dashboard</h1>
-              <div className="text-lg text-gray-500 mt-1">{formattedDate}</div>
-            </div>
-            <div className="hidden md:flex bg-white rounded-xl shadow-lg p-2 md:p-4 gap-2 md:gap-4 w-full md:w-[700px]">
-              <div className="flex-1 min-w-[160px]">
-                <label className="block text-sm font-medium mb-1">Search</label>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Name, Admission No, Class Teacher..."
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div className="min-w-[120px]">
-                <label className="block text-sm font-medium mb-1">Grade</label>
-                <select
-                  value={gradeFilter}
-                  onChange={e => setGradeFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                >
-                  <option value="">All</option>
-                  {gradeData.map(g => (
-                    <option key={g.grade} value={g.grade}>{g.grade}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="min-w-[120px]">
-                <label className="block text-sm font-medium mb-1">Gender</label>
-                <select
-                  value={genderFilter}
-                  onChange={e => setGenderFilter(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                >
-                  <option value="">All</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <button className="bg-primary text-white px-4 py-2 rounded font-semibold">Search</button>
-            </div>
-          </div>
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto">
 
-          {/* Quick Actions */}
-          <div className="flex flex-wrap gap-4 mb-8 items-center justify-between">
-            <div>
-              <button
-                className="bg-green-600 text-white px-4 py-2 rounded font-semibold shadow"
-                onClick={() => window.location.href = '/dashboard/students/details'}
-              >
-                Students
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-green-200 text-green-900 px-4 py-2 rounded font-semibold shadow">+ Register New Student</button>
-              <button className="bg-orange-200 text-orange-900 px-4 py-2 rounded font-semibold shadow">Update Student Details</button>
-              <button className="bg-yellow-200 text-yellow-900 px-4 py-2 rounded font-semibold shadow">Transfer Student</button>
-              <button className="bg-blue-200 text-blue-900 px-4 py-2 rounded font-semibold shadow">Export List</button>
-              <button className="bg-gray-200 text-gray-900 px-4 py-2 rounded font-semibold shadow">Print ID Cards</button>
-            </div>
-          </div>
-
-          {/* Top Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-            {/* Total Registered Students with Male/Female breakdown */}
-            <div className="bg-blue-100 text-blue-800 rounded-xl shadow-lg flex flex-col justify-center py-6 gap-2">
-              <div className="text-lg font-semibold text-gray-700 text-center mb-2">Total Registered Students</div>
-              <div className="flex flex-row items-center w-full px-6 justify-between">
-                <div className="text-3xl font-bold text-primary text-left">1450</div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-sm font-semibold text-blue-600">Male - 750</span>
-                  <span className="text-sm font-semibold text-pink-500">Female - 700</span>
+          {/* Hero */}
+          <div className="bg-gradient-to-br from-[#212B36] via-slate-700 to-slate-600 px-8 pt-10 pb-10 text-white">
+            <div className="flex items-start justify-between max-w-5xl">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Users className="w-7 h-7 text-white/70" />
+                  <span className="text-xs uppercase tracking-[0.25em] text-white/50">School Management</span>
                 </div>
+                <h1 className="text-4xl font-extrabold tracking-tight">Students</h1>
+                <p className="text-sm text-white/50 mt-1">{today}</p>
               </div>
-            </div>
-            {/* Total Active Students with Male/Female breakdown */}
-            <div className="bg-green-100 text-green-800 rounded-xl shadow-lg flex flex-col justify-center py-6 gap-2">
-              <div className="text-lg font-semibold text-gray-700 text-center mb-2">Total Active Students</div>
-              <div className="flex flex-row items-center w-full px-6 justify-between">
-                <div className="text-3xl font-bold text-primary text-left">1400</div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-sm font-semibold text-blue-600">Male - 720</span>
-                  <span className="text-sm font-semibold text-pink-500">Female - 680</span>
-                </div>
-              </div>
-            </div>
-            {/* Absent Today with Male/Female breakdown */}
-            <div className="bg-red-100 text-red-800 rounded-xl shadow-lg flex flex-col justify-center py-6 gap-2">
-              <div className="text-lg font-semibold text-gray-700 text-center mb-2">Absent Today</div>
-              <div className="flex flex-row items-center w-full px-6 justify-between">
-                <div className="text-3xl font-bold text-primary text-left">80</div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-sm font-semibold text-blue-600">Male - 30</span>
-                  <span className="text-sm font-semibold text-pink-500">Female - 50</span>
-                </div>
+              <div className="flex gap-3 mt-1">
+                {quickActions.map(a => {
+                  const Icon = a.icon;
+                  return (
+                    <Link
+                      key={a.label}
+                      href={a.href}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                        a.primary
+                          ? 'bg-white text-[#212B36] hover:bg-white/90'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/15'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {a.label}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* 🎓 Student Summary Section */}
-          <div className="space-y-8">
-            {/* 📋 General Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                📋 General Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
-                  <div className="text-sm text-blue-600 font-medium">Total Enrolled</div>
-                  <div className="text-2xl font-bold text-blue-800">1,450</div>
-                  <div className="text-xs text-blue-600 mt-1">+25 this month</div>
-                </div>
-                <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
-                  <div className="text-sm text-green-600 font-medium">New Admissions</div>
-                  <div className="text-2xl font-bold text-green-800">25</div>
-                  <div className="text-xs text-green-600 mt-1">This month</div>
-                </div>
-                <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-4">
-                  <div className="text-sm text-orange-600 font-medium">Dropouts</div>
-                  <div className="text-2xl font-bold text-orange-800">8</div>
-                  <div className="text-xs text-orange-600 mt-1">This month</div>
-                </div>
-                <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4">
-                  <div className="text-sm text-purple-600 font-medium">Active Students</div>
-                  <div className="text-2xl font-bold text-purple-800">1,400</div>
-                  <div className="text-xs text-purple-600 mt-1">96.6% retention</div>
-                </div>
-              </div>
-              
-              {/* Students by Grade Breakdown */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-4">Students by Grade</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-                  {gradeData.map(grade => (
-                    <div key={grade.grade} className="bg-gray-50 rounded-lg p-3 text-center">
-                      <div className="text-lg font-bold text-primary">Grade {grade.grade}</div>
-                      <div className="text-sm text-gray-600">{grade.total} students</div>
+          <div className="px-8 pt-8 pb-16 space-y-8">
+
+            {/* Stat Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+              {statCards.map(card => {
+                const Icon = card.icon;
+                return (
+                  <div key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-3">
+                    <div className={`w-10 h-10 rounded-xl ${card.bg} flex items-center justify-center`}>
+                      <Icon className={`w-5 h-5 ${card.color}`} />
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div>
+                      <div className="text-2xl font-extrabold text-gray-900">{card.value}</div>
+                      <div className="text-xs text-gray-500 font-medium mt-0.5 leading-tight">{card.label}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">{card.sub}</div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* 👨‍🏫 Attendance Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                👨‍🏫 Attendance Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
-                  <div className="text-sm text-green-600 font-medium">Todays Attendance</div>
-                  <div className="text-2xl font-bold text-green-800">94.5%</div>
-                  <div className="text-xs text-green-600 mt-1">1,370 present / 80 absent</div>
-                </div>
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
-                  <div className="text-sm text-blue-600 font-medium">Monthly Average</div>
-                  <div className="text-2xl font-bold text-blue-800">92.3%</div>
-                  <div className="text-xs text-blue-600 mt-1">Last 30 days</div>
-                </div>
-                <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-4">
-                  <div className="text-sm text-red-600 font-medium">Chronic Absentees</div>
-                  <div className="text-2xl font-bold text-red-800">45</div>
-                  <div className="text-xs text-red-600 mt-1">&lt;75% attendance</div>
-                </div>
-              </div>
-              
-              {/* Top Punctual Students */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-4">Top 5 Most Punctual Students</h3>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="space-y-2">
-                    {[
-                      { name: "Ayesha Perera", grade: "10A", attendance: "99.8%" },
-                      { name: "Kasun Silva", grade: "12B", attendance: "99.5%" },
-                      { name: "Nimal Fernando", grade: "8C", attendance: "99.2%" },
-                      { name: "Samantha Jayasuriya", grade: "11A", attendance: "98.9%" },
-                      { name: "Dilshan Perera", grade: "9B", attendance: "98.7%" }
-                    ].map((student, index) => (
-                      <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
-                        <div>
-                          <span className="font-medium">{student.name}</span>
-                          <span className="text-gray-500 ml-2">({student.grade})</span>
-                        </div>
-                        <span className="text-green-600 font-bold">{student.attendance}</span>
-                      </div>
+            {/* Grade Table + Side Panel */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+              {/* Grade-wise Breakdown Table */}
+              <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-gray-400" />
+                    <span className="font-semibold text-gray-800">Grade-wise Breakdown</span>
+                  </div>
+                  <select
+                    value={gradeFilter}
+                    onChange={e => setGradeFilter(e.target.value)}
+                    className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">All Grades</option>
+                    {gradeData.map(g => (
+                      <option key={g.grade} value={g.grade}>Grade {g.grade}</option>
                     ))}
+                  </select>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100 text-gray-500 text-xs uppercase tracking-wide">
+                        <th className="text-left px-6 py-3 font-semibold">Grade</th>
+                        <th className="text-center px-4 py-3 font-semibold">Total</th>
+                        <th className="text-center px-4 py-3 font-semibold text-emerald-600">Present</th>
+                        <th className="text-center px-4 py-3 font-semibold text-red-500">Absent</th>
+                        <th className="text-center px-4 py-3 font-semibold text-blue-500">Male</th>
+                        <th className="text-center px-4 py-3 font-semibold text-pink-500">Female</th>
+                        <th className="text-center px-4 py-3 font-semibold">Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredGrades.map((row, i) => {
+                        const rate = ((row.present / row.total) * 100).toFixed(0);
+                        return (
+                          <tr key={row.grade} className={`border-b border-gray-50 hover:bg-gray-50/60 transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}>
+                            <td className="px-6 py-3 font-semibold text-gray-800">Grade {row.grade}</td>
+                            <td className="px-4 py-3 text-center font-medium text-gray-700">{row.total}</td>
+                            <td className="px-4 py-3 text-center font-medium text-emerald-600">{row.present}</td>
+                            <td className="px-4 py-3 text-center font-medium text-red-500">{row.absent}</td>
+                            <td className="px-4 py-3 text-center text-blue-500">{row.male}</td>
+                            <td className="px-4 py-3 text-center text-pink-500">{row.female}</td>
+                            <td className="px-4 py-3 text-center">
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                Number(rate) >= 95 ? 'bg-emerald-100 text-emerald-700' :
+                                Number(rate) >= 85 ? 'bg-amber-100 text-amber-700' :
+                                'bg-red-100 text-red-600'
+                              }`}>
+                                {rate}%
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-[#212B36]/5 border-t-2 border-gray-200 font-bold text-sm">
+                        <td className="px-6 py-3 text-gray-800">Total</td>
+                        <td className="px-4 py-3 text-center text-gray-800">{totalStudents}</td>
+                        <td className="px-4 py-3 text-center text-emerald-600">{totalPresent}</td>
+                        <td className="px-4 py-3 text-center text-red-500">{totalAbsent}</td>
+                        <td className="px-4 py-3 text-center text-blue-500">{totalMale}</td>
+                        <td className="px-4 py-3 text-center text-pink-500">{totalFemale}</td>
+                        <td className="px-4 py-3 text-center">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">{attendanceRate}%</span>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              {/* Side Panel */}
+              <div className="flex flex-col gap-4">
+
+                {/* Attendance Overview */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="w-4 h-4 text-gray-400" />
+                    <span className="font-semibold text-gray-800 text-sm">Attendance Overview</span>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 📈 Academic Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                📈 Academic Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg p-4">
-                  <div className="text-sm text-yellow-600 font-medium">Top Performers</div>
-                  <div className="text-2xl font-bold text-yellow-800">156</div>
-                  <div className="text-xs text-yellow-600 mt-1">GPA &gt;3.8</div>
-                </div>
-                <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-4">
-                  <div className="text-sm text-red-600 font-medium">At Risk Students</div>
-                  <div className="text-2xl font-bold text-red-800">23</div>
-                  <div className="text-xs text-red-600 mt-1">GPA &lt;2.0</div>
-                </div>
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
-                  <div className="text-sm text-blue-600 font-medium">Average GPA</div>
-                  <div className="text-2xl font-bold text-blue-800">3.4</div>
-                  <div className="text-xs text-blue-600 mt-1">School wide</div>
-                </div>
-              </div>
-              
-              {/* Performance by Subject */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-4">Average Performance by Subject</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                     {[
-                     { subject: "Mathematics", avg: "3.6", color: "blue" },
-                     { subject: "Science", avg: "3.4", color: "green" },
-                     { subject: "English", avg: "3.2", color: "purple" },
-                     { subject: "History", avg: "3.5", color: "orange" }
-                   ].map((subject, index) => (
-                     <div key={index} className="bg-gray-50 rounded-lg p-3 text-center">
-                       <div className="text-sm font-medium text-gray-600">{subject.subject}</div>
-                       <div className="text-lg font-bold text-primary">{subject.avg}</div>
-                     </div>
-                   ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 💰 Fee & Finance Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                💰 Fee & Finance Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-4">
-                  <div className="text-sm text-red-600 font-medium">Pending Fees</div>
-                  <div className="text-2xl font-bold text-red-800">89</div>
-                  <div className="text-xs text-red-600 mt-1">Students</div>
-                </div>
-                <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
-                  <div className="text-sm text-green-600 font-medium">Scholarships</div>
-                  <div className="text-2xl font-bold text-green-800">45</div>
-                  <div className="text-xs text-green-600 mt-1">Students</div>
-                </div>
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
-                  <div className="text-sm text-blue-600 font-medium">Fees Collected</div>
-                  <div className="text-2xl font-bold text-blue-800">$45,230</div>
-                  <div className="text-xs text-blue-600 mt-1">This month</div>
-                </div>
-                <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-4">
-                  <div className="text-sm text-orange-600 font-medium">Due Payments</div>
-                  <div className="text-2xl font-bold text-orange-800">$12,450</div>
-                  <div className="text-xs text-orange-600 mt-1">Next week</div>
-                </div>
-              </div>
-            </div>
-
-            {/* 🏅 Behavior & Activity Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                🏅 Behavior & Activity Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-4">
-                  <div className="text-sm text-red-600 font-medium">Discipline Records</div>
-                  <div className="text-2xl font-bold text-red-800">12</div>
-                  <div className="text-xs text-red-600 mt-1">This month</div>
-                </div>
-                <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
-                  <div className="text-sm text-green-600 font-medium">Achievements</div>
-                  <div className="text-2xl font-bold text-green-800">67</div>
-                  <div className="text-xs text-green-600 mt-1">This year</div>
-                </div>
-                <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4">
-                  <div className="text-sm text-purple-600 font-medium">Extracurricular</div>
-                  <div className="text-2xl font-bold text-purple-800">890</div>
-                  <div className="text-xs text-purple-600 mt-1">Participations</div>
-                </div>
-              </div>
-            </div>
-
-            {/* 👨‍👩‍👧‍👦 Demographics Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                👨‍👩‍👧‍👦 Demographics Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Gender Distribution</h3>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">Male</span>
-                      <span className="text-blue-600 font-bold">750 (51.7%)</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Female</span>
-                      <span className="text-pink-600 font-bold">700 (48.3%)</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Age Distribution</h3>
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                    {[
-                      { range: "5-10 years", count: "320", percentage: "22.1%" },
-                      { range: "11-15 years", count: "580", percentage: "40.0%" },
-                      { range: "16-18 years", count: "550", percentage: "37.9%" }
-                    ].map((age, index) => (
-                      <div key={index} className="flex justify-between items-center">
-                        <span className="font-medium">{age.range}</span>
-                        <span className="text-gray-600">{age.count} ({age.percentage})</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-4">Special Needs Support</h3>
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
-                  <div className="text-2xl font-bold text-blue-800">23 Students</div>
-                  <div className="text-sm text-blue-600 mt-1">With special needs / support plans</div>
-                </div>
-              </div>
-            </div>
-
-            {/* 🔍 Interactive Tools */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                🔍 Interactive Tools
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Advanced Search & Filters</h3>
-                  <div className="space-y-4">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Search by name, ID, grade..."
-                        className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                      <button className="bg-primary text-white px-4 py-2 rounded font-semibold">Search</button>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      <select className="border border-gray-300 rounded px-3 py-2">
-                        <option>All Grades</option>
-                        {gradeData.map(g => (
-                          <option key={g.grade}>Grade {g.grade}</option>
-                        ))}
-                      </select>
-                      <select className="border border-gray-300 rounded px-3 py-2">
-                        <option>All Attendance %</option>
-                        <option>&gt;90%</option>
-                        <option>75-90%</option>
-                        <option>&lt;75%</option>
-                      </select>
-                      <select className="border border-gray-300 rounded px-3 py-2">
-                        <option>All Payment Status</option>
-                        <option>Paid</option>
-                        <option>Pending</option>
-                        <option>Overdue</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Export & Reports</h3>
                   <div className="space-y-3">
-                    <button className="w-full bg-green-600 text-white px-4 py-2 rounded font-semibold hover:bg-green-700 transition">
-                      📊 Download Summary Report (PDF)
-                    </button>
-                    <button className="w-full bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700 transition">
-                      📋 Export Student List (Excel)
-                    </button>
-                    <button className="w-full bg-purple-600 text-white px-4 py-2 rounded font-semibold hover:bg-purple-700 transition">
-                      📈 Generate Analytics Report
-                    </button>
+                    {[
+                      { label: "Today",          value: `${attendanceRate}%`, sub: `${totalPresent} present`, color: 'bg-emerald-500' },
+                      { label: "Monthly Avg",    value: "92.3%",              sub: "Last 30 days",           color: 'bg-blue-500'    },
+                      { label: "Chronic Absent", value: "45",                 sub: "Below 75%",              color: 'bg-red-400'     },
+                    ].map(item => (
+                      <div key={item.label} className="flex items-center gap-3">
+                        <div className={`w-1.5 h-8 rounded-full ${item.color} flex-shrink-0`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs text-gray-500">{item.label}</div>
+                          <div className="text-sm font-bold text-gray-800">{item.value}</div>
+                        </div>
+                        <div className="text-xs text-gray-400 text-right">{item.sub}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
+
+                {/* Gender Distribution */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <span className="font-semibold text-gray-800 text-sm">Gender Split</span>
+                  </div>
+                  <div className="flex rounded-xl overflow-hidden h-3 mb-3">
+                    <div className="bg-blue-400" style={{ width: `${(totalMale / totalStudents * 100).toFixed(1)}%` }} />
+                    <div className="bg-pink-400 flex-1" />
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block" />
+                        <span className="text-gray-600 text-xs">Male</span>
+                      </div>
+                      <div className="font-bold text-gray-800 mt-0.5">{totalMale} <span className="text-xs text-gray-400 font-normal">({(totalMale/totalStudents*100).toFixed(1)}%)</span></div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center gap-1.5 justify-end">
+                        <span className="w-2.5 h-2.5 rounded-full bg-pink-400 inline-block" />
+                        <span className="text-gray-600 text-xs">Female</span>
+                      </div>
+                      <div className="font-bold text-gray-800 mt-0.5">{totalFemale} <span className="text-xs text-gray-400 font-normal">({(totalFemale/totalStudents*100).toFixed(1)}%)</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Academic Snapshot */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BookOpen className="w-4 h-4 text-gray-400" />
+                    <span className="font-semibold text-gray-800 text-sm">Academic Snapshot</span>
+                  </div>
+                  <div className="space-y-2.5">
+                    {[
+                      { label: 'School Average GPA', value: '3.4',  icon: TrendingUp,  color: 'text-blue-500'   },
+                      { label: 'Top Performers',      value: '156',  icon: Award,       color: 'text-amber-500'  },
+                      { label: 'At-Risk Students',    value: '23',   icon: AlertCircle, color: 'text-red-500'    },
+                      { label: 'Special Needs',       value: '23',   icon: Users,       color: 'text-violet-500' },
+                    ].map(item => {
+                      const Icon = item.icon;
+                      return (
+                        <div key={item.label} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Icon className={`w-3.5 h-3.5 ${item.color}`} />
+                            <span className="text-xs text-gray-600">{item.label}</span>
+                          </div>
+                          <span className="text-sm font-bold text-gray-800">{item.value}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <Link
+                    href="#"
+                    className="mt-4 flex items-center gap-1.5 text-xs text-blue-500 font-semibold hover:text-blue-600 transition-colors"
+                  >
+                    View full report <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+
               </div>
             </div>
+
           </div>
         </main>
       </div>

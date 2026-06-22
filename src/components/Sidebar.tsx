@@ -14,6 +14,7 @@ import {
   UserCog,
   PencilLine,
   Book,
+  Package,
 } from 'lucide-react';
 
 const navItems = [
@@ -26,6 +27,7 @@ const navItems = [
   { label: 'Notices', href: '/dashboard/notices', icon: Bell },
   { label: 'Leaves', href: '/dashboard/leaves', icon: FileText },
   { label: 'Register', href: '/dashboard/register', icon: PencilLine },
+  { label: 'Resources', href: '/dashboard/resources', icon: Package },
 ];
 
 const classSectionLinks = [
