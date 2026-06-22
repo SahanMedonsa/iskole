@@ -1,7 +1,7 @@
 "use client";
 import Navbar from '../../../../../components/Navbar';
 import Sidebar from '../../../../../components/Sidebar';
-import { useState } from 'react';
+import { useState, use } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -31,8 +31,8 @@ function getYoutubeThumbnail(url: string): string | null {
   return match ? `https://img.youtube.com/vi/${match[1]}/0.jpg` : null;
 }
 
-export default function SubjectLessonsPage({ params }: { params: { grade: string; subject: string } }) {
-  const { grade, subject } = params;
+export default function SubjectLessonsPage({ params }: { params: Promise<{ grade: string; subject: string }> }) {
+  const { grade, subject } = use(params);
   const router = useRouter();
   const [openLesson, setOpenLesson] = useState<number | null>(null);
   const [lessons, setLessons] = useState(initialLessons);
