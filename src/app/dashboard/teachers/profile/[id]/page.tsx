@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import { 
-  ArrowLeft, User, Briefcase, Book, Presentation, Shuffle, 
-  ClipboardList, DollarSign, FileText, Mail, Settings,
+  ArrowLeft, User, Presentation,
+  DollarSign, FileText, Mail, Settings,
   Phone, MapPin, Calendar, Award, GraduationCap,
-  Clock, Users, Target, TrendingUp, Star, Download, Printer, CheckCircle, Upload, Eye, CalendarDays, Pencil, Trash
+  Clock, Users, Target, Star, Printer, CheckCircle, Upload, Eye, CalendarDays, Pencil, Trash
 } from "lucide-react";
 import Sidebar from "../../../../../components/Sidebar";
 import { useRouter } from "next/navigation";
@@ -154,9 +155,9 @@ export default function ProfessionalTeacherProfile() {
   });
 
   // Helper to get month name from YYYY-MM
-  function getMonthName(ym) {
+  function getMonthName(ym: string) {
     const [year, month] = ym.split('-');
-    return new Date(year, parseInt(month, 10) - 1).toLocaleString('default', { month: 'long' });
+    return new Date(parseInt(year, 10), parseInt(month, 10) - 1).toLocaleString('default', { month: 'long' });
   }
 
   return (
@@ -183,9 +184,10 @@ export default function ProfessionalTeacherProfile() {
               
               <div className="px-8 pb-8 py-10">
                 <div className="flex items-start gap-6 -mt-16">
-                  <img 
-                    src={teacher.profilePhoto} 
-                    alt="Profile" 
+                  <Image
+                    src={teacher.profilePhoto}
+                    alt="Profile"
+                    width={128} height={128}
                     className="w-32 h-32 rounded-2xl border-4 border-white shadow-lg object-cover mt-20"
                   />
                   <div className="flex-1 mt-16">
@@ -896,7 +898,7 @@ function SettingsForm() {
   const [gmail, setGmail] = useState("nirosha.d@email.com");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const handleUpdate = (e) => {
+  const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("Account updated (demo only)");
   };
@@ -957,8 +959,8 @@ function DirectMessageSection() {
       setShowForm(false);
     }
   };
-  const handleDelete = (id) => setMessages(messages.filter(m => m.id !== id));
-  const handleEdit = (id) => {
+  const handleDelete = (id: number) => setMessages(messages.filter(m => m.id !== id));
+  const handleEdit = (id: number) => {
     const msg = messages.find(m => m.id === id);
     if (msg) {
       setNewMsg({ title: msg.title, content: msg.content });

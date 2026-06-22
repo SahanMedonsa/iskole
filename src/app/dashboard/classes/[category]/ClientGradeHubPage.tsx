@@ -34,10 +34,11 @@ const categoryLabel: Record<'primary' | 'secondary', string> = {
 };
 
 export default function ClientGradeHubPage({ gradeSlug, category }: Props) {
-  const hubs = gradeHubsByCategory[category as ClassCategorySlug] ?? [];
   const grade = useMemo(
-    () => hubs.find((item) => item.gradeSlug === gradeSlug),
-    [gradeSlug, hubs]
+    () => (gradeHubsByCategory[category as ClassCategorySlug] ?? []).find(
+      (item) => item.gradeSlug === gradeSlug
+    ),
+    [gradeSlug, category]
   );
 
   const [sections, setSections] = useState<LocalSection[]>([]);

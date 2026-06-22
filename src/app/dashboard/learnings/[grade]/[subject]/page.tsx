@@ -2,6 +2,7 @@
 import Navbar from '../../../../../components/Navbar';
 import Sidebar from '../../../../../components/Sidebar';
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 const initialLessons = [
@@ -25,30 +26,30 @@ const initialLessons = [
   },
 ];
 
-function getYoutubeThumbnail(url) {
+function getYoutubeThumbnail(url: string): string | null {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
   return match ? `https://img.youtube.com/vi/${match[1]}/0.jpg` : null;
 }
 
-export default function SubjectLessonsPage({ params }) {
+export default function SubjectLessonsPage({ params }: { params: { grade: string; subject: string } }) {
   const { grade, subject } = params;
   const router = useRouter();
-  const [openLesson, setOpenLesson] = useState(null);
+  const [openLesson, setOpenLesson] = useState<number | null>(null);
   const [lessons, setLessons] = useState(initialLessons);
-  const [showPdfModal, setShowPdfModal] = useState({ open: false, lessonId: null });
-  const [showVideoModal, setShowVideoModal] = useState({ open: false, lessonId: null });
-  const [pdfForm, setPdfForm] = useState({ title: '', description: '', file: null });
+  const [showPdfModal, setShowPdfModal] = useState<{ open: boolean; lessonId: number | null }>({ open: false, lessonId: null });
+  const [showVideoModal, setShowVideoModal] = useState<{ open: boolean; lessonId: number | null }>({ open: false, lessonId: null });
+  const [pdfForm, setPdfForm] = useState<{ title: string; description: string; file: File | null }>({ title: '', description: '', file: null });
   const [videoForm, setVideoForm] = useState({ title: '', description: '', link: '' });
   const [showAddLessonModal, setShowAddLessonModal] = useState(false);
   const [lessonForm, setLessonForm] = useState({ title: '', professional: '' });
 
   // PDF handlers
-  const openPdf = (lessonId) => { setShowPdfModal({ open: true, lessonId }); setPdfForm({ title: '', description: '', file: null }); };
-  const openVideo = (lessonId) => { setShowVideoModal({ open: true, lessonId }); setVideoForm({ title: '', description: '', link: '' }); };
+  const openPdf = (lessonId: number) => { setShowPdfModal({ open: true, lessonId }); setPdfForm({ title: '', description: '', file: null }); };
+  const openVideo = (lessonId: number) => { setShowVideoModal({ open: true, lessonId }); setVideoForm({ title: '', description: '', link: '' }); };
   const closePdf = () => setShowPdfModal({ open: false, lessonId: null });
   const closeVideo = () => setShowVideoModal({ open: false, lessonId: null });
 
-  const handlePdfSubmit = (e) => {
+  const handlePdfSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!pdfForm.title || !pdfForm.file) return;
     setLessons(lessons => lessons.map(lesson => lesson.id === showPdfModal.lessonId ? {
@@ -56,14 +57,14 @@ export default function SubjectLessonsPage({ params }) {
       materials: [...lesson.materials, {
         type: 'pdf',
         name: pdfForm.title,
-        url: URL.createObjectURL(pdfForm.file),
+        url: URL.createObjectURL(pdfForm.file!),
         description: pdfForm.description
       }]
     } : lesson));
     closePdf();
   };
 
-  const handleVideoSubmit = (e) => {
+  const handleVideoSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!videoForm.title || !videoForm.link) return;
     setLessons(lessons => lessons.map(lesson => lesson.id === showVideoModal.lessonId ? {
@@ -78,7 +79,7 @@ export default function SubjectLessonsPage({ params }) {
     closeVideo();
   };
 
-  const handleAddLesson = (e) => {
+  const handleAddLesson = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!lessonForm.title || !lessonForm.professional) return;
     setLessons([...lessons, {
@@ -139,7 +140,7 @@ export default function SubjectLessonsPage({ params }) {
                           )}
                           {mat.type === 'youtube' && (
                             <a href={mat.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                              <img src={getYoutubeThumbnail(mat.url)} alt="YouTube Thumbnail" className="w-16 h-10 object-cover rounded" />
+                              <Image src={getYoutubeThumbnail(mat.url)!} alt="YouTube Thumbnail" width={64} height={40} className="w-16 h-10 object-cover rounded" />
                               <span className="text-blue-600 underline">{mat.name}</span>
                               {mat.description && <span className="text-xs text-gray-500 ml-2">{mat.description}</span>}
                             </a>
@@ -178,7 +179,7 @@ export default function SubjectLessonsPage({ params }) {
                 <textarea placeholder="Description" className="border rounded px-3 py-2 w-full mb-2" value={videoForm.description} onChange={e => setVideoForm(f => ({ ...f, description: e.target.value }))} />
                 <input type="url" placeholder="YouTube Link" className="border rounded px-3 py-2 w-full mb-2" value={videoForm.link} onChange={e => setVideoForm(f => ({ ...f, link: e.target.value }))} required />
                 {videoForm.link && getYoutubeThumbnail(videoForm.link) && (
-                  <img src={getYoutubeThumbnail(videoForm.link)} alt="YouTube Preview" className="w-32 h-20 object-cover rounded mb-2 mx-auto" />
+                  <Image src={getYoutubeThumbnail(videoForm.link)!} alt="YouTube Preview" width={128} height={80} className="w-32 h-20 object-cover rounded mb-2 mx-auto" />
                 )}
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={closeVideo} className="px-4 py-2 rounded bg-gray-200">Cancel</button>

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { type SectionDetails } from '../../../data';
 import { useSchoolStudents, type SchoolStudent } from '../../../SchoolStudentsContext';
@@ -227,9 +228,10 @@ export default function ClientSectionDetailPage({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="rounded-3xl bg-white shadow-lg border border-gray-100 p-5">
           <div className="flex items-center gap-4">
-            <img
+            <Image
               src={resolvedDetails.classTeacherPhoto}
               alt={resolvedDetails.classTeacher}
+              width={64} height={64}
               className="h-16 w-16 rounded-2xl object-cover"
             />
             <div>
@@ -329,9 +331,10 @@ export default function ClientSectionDetailPage({
                   className="block"
                 >
                   <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 hover:bg-blue-50 transition flex items-center gap-4">
-                    <img
+                    <Image
                       src={student.photo}
                       alt={student.name}
+                      width={56} height={56}
                       className="h-14 w-14 rounded-2xl object-cover flex-shrink-0"
                     />
                     <div className="min-w-0">
@@ -404,9 +407,10 @@ export default function ClientSectionDetailPage({
               </Link>
             </div>
             <div className="flex items-center gap-4 rounded-2xl bg-gray-50 p-4">
-              <img
+              <Image
                 src={resolvedDetails.classTeacherPhoto}
                 alt={resolvedDetails.classTeacher}
+                width={64} height={64}
                 className="h-16 w-16 rounded-2xl object-cover"
               />
               <div>
@@ -749,7 +753,7 @@ export default function ClientSectionDetailPage({
                                     className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
                                   >
                                     <span className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${student.status === 'present' ? 'bg-green-500' : 'bg-red-500'}`} />
-                                    <img src={student.photo} alt={student.name} className="h-10 w-10 rounded-xl object-cover flex-shrink-0" />
+                                    <Image src={student.photo} alt={student.name} width={40} height={40} className="h-10 w-10 rounded-xl object-cover flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
                                       <div className="font-semibold text-gray-900 text-sm truncate">{student.name}</div>
                                       <div className="text-xs text-gray-500">Roll No. {student.rollNo}</div>
@@ -909,9 +913,10 @@ export default function ClientSectionDetailPage({
                         alreadyIn ? 'opacity-50 bg-gray-50' : 'hover:bg-gray-50'
                       }`}
                     >
-                      <img
+                      <Image
                         src={student.photo}
                         alt={student.name}
+                        width={44} height={44}
                         className="h-11 w-11 rounded-xl object-cover flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">

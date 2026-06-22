@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Sidebar from "../../../../../components/Sidebar";
 import Navbar from "../../../../../components/Navbar";
 import { User, Award, BookOpen, Calendar, TrendingUp, Heart, Star, MapPin, Phone, Mail, Users, Clock, CheckCircle, Pencil, Trash, Settings } from "lucide-react";
@@ -172,7 +173,6 @@ const StudentProfile = () => {
   const [showSpecialForm, setShowSpecialForm] = useState(false);
   const [editActivityIndex, setEditActivityIndex] = useState(null);
   const [editContactType, setEditContactType] = useState(null);
-  const [editSpecialType, setEditSpecialType] = useState(null);
 
   // Add state for message form and history
   const [messageTitle, setMessageTitle] = useState("");
@@ -190,14 +190,14 @@ const StudentProfile = () => {
   // When activeTab === 'settings', render the settings form as a normal tab panel
   const [username, setUsername] = useState(studentData?.login?.username || "sahan.medonsa");
 
-  function handleEditMessage(idx) {
+  function handleEditMessage(idx: number) {
     setEditMessageIndex(idx);
     setMessageTitle(messageHistory[idx].title);
     setMessageDescription(messageHistory[idx].description);
     setShowMessageForm(true);
   }
 
-  function handleDeleteMessage(idx) {
+  function handleDeleteMessage(idx: number) {
     setMessageHistory(messageHistory.filter((_, i) => i !== idx));
     if (editMessageIndex === idx) {
       setShowMessageForm(false);
@@ -205,7 +205,7 @@ const StudentProfile = () => {
     }
   }
 
-  function handleSendMessage(e) {
+  function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (messageTitle.trim() && messageDescription.trim()) {
       if (editMessageIndex !== null) {
@@ -271,9 +271,10 @@ const StudentProfile = () => {
               <div className="relative p-8">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="relative">
-                    <img
+                    <Image
                       src={studentData.personalInfo.avatar}
                       alt={studentData.personalInfo.name}
+                      width={128} height={128}
                       className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                     />
                     <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-3 border-white flex items-center justify-center">
@@ -451,11 +452,11 @@ const StudentProfile = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {gradeSubjects[selectedGrade]?.map((subject, idx) => (
+                      {gradeSubjects[selectedGrade]?.map((subject: { name: string; mark: number }, idx: number) => (
                         <tr key={idx} className="border-b last:border-0">
                           <td className="px-4 py-2 font-medium">{subject.name}</td>
                           <td className="px-4 py-2">{subject.mark}</td>
-                          <td className="px-4 py-2">{gradeSubjectTeachers[selectedGrade]?.find(s => s.name === subject.name)?.teacher || '-'}</td>
+                          <td className="px-4 py-2">{gradeSubjectTeachers[selectedGrade]?.find((s: { name: string; teacher: string }) => s.name === subject.name)?.teacher || '-'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -465,7 +466,7 @@ const StudentProfile = () => {
                 <div className="flex flex-wrap gap-6 mt-6">
                   <div className="bg-blue-50 rounded-xl p-4 flex-1 min-w-[160px]">
                     <div className="text-xs text-blue-600 font-semibold">Total Marks</div>
-                    <div className="text-2xl font-bold text-blue-800">{gradeSubjects[selectedGrade]?.reduce((sum, s) => sum + s.mark, 0)}</div>
+                    <div className="text-2xl font-bold text-blue-800">{gradeSubjects[selectedGrade]?.reduce((sum: number, s: { mark: number }) => sum + s.mark, 0)}</div>
                   </div>
                   <div className="bg-green-50 rounded-xl p-4 flex-1 min-w-[160px]">
                     <div className="text-xs text-green-600 font-semibold">Rank</div>
@@ -473,7 +474,7 @@ const StudentProfile = () => {
                   </div>
                   <div className="bg-purple-50 rounded-xl p-4 flex-1 min-w-[160px]">
                     <div className="text-xs text-purple-600 font-semibold">Average</div>
-                    <div className="text-2xl font-bold text-purple-800">{Math.round((gradeSubjects[selectedGrade]?.reduce((sum, s) => sum + s.mark, 0) / (gradeSubjects[selectedGrade]?.length || 1)) * 10) / 10}</div>
+                    <div className="text-2xl font-bold text-purple-800">{Math.round((gradeSubjects[selectedGrade]?.reduce((sum: number, s: { mark: number }) => sum + s.mark, 0) / (gradeSubjects[selectedGrade]?.length || 1)) * 10) / 10}</div>
                   </div>
                   <div className="bg-pink-50 rounded-xl p-4 flex-1 min-w-[160px]">
                     <div className="text-xs text-pink-600 font-semibold">Total Students</div>
