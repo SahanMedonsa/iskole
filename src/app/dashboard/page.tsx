@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Navbar from '../../components/Navbar';
-import ClassAttendanceStatus from '../../components/ClassAttendanceStatus';
+import { TODAY_CLASSES } from '../../components/ClassAttendanceStatus';
 import {
   Users, GraduationCap, UserCheck, CalendarDays, Bell, FileText,
   UserPlus, AlertTriangle, TrendingUp, BookOpen, ClipboardList,
@@ -131,6 +131,11 @@ export default function DashboardPage() {
     weekday:'long', year:'numeric', month:'long', day:'numeric',
   });
 
+  const markedClasses  = TODAY_CLASSES.filter(c => !!c.markedAt).length;
+  const totalClasses   = TODAY_CLASSES.length;
+  const pendingClasses = totalClasses - markedClasses;
+  const markedPct      = Math.round((markedClasses / totalClasses) * 100);
+
   const totalStudents = STUDENTS_BY_GRADE.reduce((a, g) => a + g.boys + g.girls, 0);
   const totalBoys     = STUDENTS_BY_GRADE.reduce((a, g) => a + g.boys, 0);
   const totalGirls    = STUDENTS_BY_GRADE.reduce((a, g) => a + g.girls, 0);
@@ -153,6 +158,38 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs text-gray-500 font-medium">Live</span>
+            </div>
+          </div>
+
+          {/* ── Class attendance progress bar ── */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Clock className="w-4 h-4 text-[#3E4EFA]" />
+              <span className="text-xs font-bold text-gray-700">Today's Class Attendance</span>
+            </div>
+            <div className="flex-1 flex items-center gap-3">
+              <div className="flex-1 h-2.5 rounded-full bg-gray-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-emerald-400 transition-all"
+                  style={{ width: `${markedPct}%` }}
+                />
+              </div>
+              <span className="text-xs font-extrabold text-gray-700 whitespace-nowrap">
+                {markedClasses}/{totalClasses}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <span className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+                {markedClasses} marked
+              </span>
+              <span className="flex items-center gap-1.5 text-[11px] font-semibold text-red-500">
+                <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
+                {pendingClasses} pending
+              </span>
+              <a href="/dashboard/attendance" className="text-[11px] font-semibold text-[#3E4EFA] hover:underline flex items-center gap-0.5">
+                View all <ChevronRight className="w-3 h-3" />
+              </a>
             </div>
           </div>
 
@@ -325,8 +362,6 @@ export default function DashboardPage() {
                 </ResponsiveContainer>
               </div>
 
-              {/* Class attendance status */}
-              <ClassAttendanceStatus />
 
             </div>
 
